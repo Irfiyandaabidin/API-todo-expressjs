@@ -5,6 +5,26 @@ const router = express.Router();
 const UserController = require("../app/controller/user.controller");
 const UserValidator = require("../app/validator/user.validator");
 const AuthMiddleware = require("../middleware/auth.middleware");
+const upload = require("../middleware/image.middleware");
+
+/**
+ * @openapi
+ * /user/profile:
+ *  get:
+ *     tags:
+ *     - User
+ *     summary: Get profile user
+ *     security:
+ *	     - bearerAuth: []
+ *     responses:
+ *      200:
+ *        description: Success
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+router.get("/user/profile", AuthMiddleware, UserController.profile);
 
 /**
  * @openapi
@@ -15,6 +35,12 @@ const AuthMiddleware = require("../middleware/auth.middleware");
  *     summary: Get all user
  *     security:
  *	     - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *            type: string
+ *         description: search user with email or name
  *     responses:
  *      200:
  *        description: Success
@@ -95,7 +121,7 @@ router.get("/user/:id", AuthMiddleware, UserController.show);
  *     - User
  *     summary: Update User
  *     security:
- *	     - bearerAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *     - name: id
  *       in: path
@@ -104,20 +130,21 @@ router.get("/user/:id", AuthMiddleware, UserController.show);
  *     requestBody:
  *      required: true
  *      content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *            type: object
  *            required:
  *              - name
  *              - email
- *              - password
  *            properties:
  *              name:
- *               type: string
+ *                type: string
  *              email:
- *               type: string
- *              password:
- *               type: string
+ *                type: string
+ *              profile:
+ *                type: string
+ *                format: binary
+ *                description: The profile image file
  *     responses:
  *      200:
  *        description: Success
@@ -128,7 +155,7 @@ router.get("/user/:id", AuthMiddleware, UserController.show);
  *      500:
  *        description: Server Error
  */
-router.put("/user/:id", AuthMiddleware, UserValidator.update, UserController.update);
+router.put("/user/:id", AuthMiddleware, upload.single("profile"), UserValidator.update, UserController.update);
 
 /**
  * @openapi
@@ -152,6 +179,6 @@ router.put("/user/:id", AuthMiddleware, UserValidator.update, UserController.upd
  *      500:
  *        description: Server Error
  */
-router.delete("/user/:id", AuthMiddleware, UserController.destroy);
+ router.delete("/user/:id", AuthMiddleware, UserController.destroy);
 
 module.exports = router;

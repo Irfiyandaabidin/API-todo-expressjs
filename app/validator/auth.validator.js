@@ -29,7 +29,21 @@ const register = [
 
   check("email").not().isEmpty().withMessage("email can not be empty!"),
 
+  check("email").isEmail().withMessage("format email is not valid!"),
+
+  check("phone_number").not().isEmpty().withMessage("phone_number can not be empty!"),
+
+  check("phone_number").isLength({ min: 10, max: 14 }).withMessage("phone_number number min 10 and max 14 character"),
+
   check("password").not().isEmpty().withMessage("password can not be empty!"),
+
+  check("confirm_password").not().isEmpty().withMessage("confirm_password can not be empty!")
+    .custom((value, { req }) => {
+      if(value !== req.body.password) {
+        throw new Error("confirm_password does not match password");
+      }
+      return true;
+    }),
 
   (req, res, next) => {
     const errors = validationResult(req);

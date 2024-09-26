@@ -1,14 +1,11 @@
 const { check, validationResult } = require("express-validator");
 
 const store = [
-  check("name").not().isEmpty().withMessage("name can not be empty!"),
+  check("description").not().isEmpty().withMessage("description can not be empty!"),
+  check("description").isString().withMessage("description must be string!"),
 
-  check("email").not().isEmpty().withMessage("email can not be empty!"),
-
-  check("email").isEmail().withMessage("format email is not valid!"),
-
-  check("password").not().isEmpty().withMessage("password can not be empty!"),
-
+  check("id_project").not().isEmpty().withMessage("id_project can not be empty!"),
+  check("id_project").isInt().withMessage("id_project must be integer!"),
   (req, res, next) => {
     const errors = validationResult(req);
 
@@ -19,19 +16,20 @@ const store = [
       };
     });
 
-    if (!errors.isEmpty())
+    if(!errors.isEmpty())
       return res.status(422).json({
         errors: error_data,
       });
 
     next();
-  },
-];
+  }
+]
 
 const update = [
-  check("name").not().isEmpty().withMessage("name can not be empty!"),
+  check("description").optional().isString().withMessage("description must be string!"),
+  check("description").notEmpty().withMessage(" string!"),
 
-  check("email").not().isEmpty().withMessage("email can not be empty!"),
+  check("is_completed").optional().isBoolean().withMessage("is_completed must be boolean!"),
 
   (req, res, next) => {
     const errors = validationResult(req);
@@ -43,16 +41,17 @@ const update = [
       };
     });
 
-    if (!errors.isEmpty())
+    if(!errors.isEmpty())
       return res.status(422).json({
         errors: error_data,
       });
 
     next();
-  },
-];
+  }
+]
+
 
 module.exports = {
   store,
-  update,
-};
+  update
+}

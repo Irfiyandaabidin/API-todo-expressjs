@@ -4,55 +4,46 @@ const { Model } = require("objection");
 
 Model.knex(db);
 
-class User extends Model {
+class Project extends Model {
   static get tableName() {
-    return "users";
+    return "projects";
   }
 
   static get jsonSchema() {
     return {
       type: "object",
 
-      required: ["name", "email", "password", "phone_number"],
+      required: ["name"],
 
       properties: {
         name: {
           type: "string",
-        },
-        email: {
-          type: "string",
-        },
-        password: {
-          type: "string",
-        },
-        phone_number: {
-          type: "string"
         }
-      },
-    };
+      }
+    }
   }
 
   static get relationMappings() {
     const MemberProject = require("./member.project.model");
-    const Todo =  require("./todo.model");
+    const Todo = require("./todo.model");
 
     return {
-      member_project: {
+      memberProjects: {
         relation: Model.HasManyRelation,
         modelClass: MemberProject,
         join: {
-          from: "users.id",
-          to: "member_projects.id_user"
+          from: "projects.id",
+          to: "member_projects.id_project"
         }
       },
-      todo: {
+      todos: {
         relation: Model.HasManyRelation,
         modelClass: Todo,
         join: {
-          from: "users.id",
-          to: "todos.created_by"
+          from: "projects.id",
+          to: "todos.id_project"
         }
-      }
+      },
     }
   }
 
@@ -61,4 +52,4 @@ class User extends Model {
   }
 }
 
-module.exports = User;
+module.exports = Project;

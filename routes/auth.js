@@ -4,13 +4,38 @@ const router = express.Router();
 
 const AuthController = require("../app/controller/auth.controller");
 const AuthValidator = require("../app/validator/auth.validator");
+const AuthMiddleware = require("../middleware/auth.middleware");
+
+const csurf = require("csurf");
+const csrfProtection = csurf({ cookie: true });
+
+/**
+ * @openapi
+ * /csrf-token:
+ *  get:
+ *     tags:
+ *     - Auth
+ *     summary: Generate CSRF Token
+ *     security:
+ *	     - bearerAuth: []
+ *     responses:
+ *      200:
+ *        description: Success
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: Server Error
+ */
+router.get('/csrf-token', csrfProtection, AuthMiddleware, (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 
 /**
  * @openapi
  * /login:
  *  post:
  *     tags:
- *     - Admin Auth
+ *     - Auth
  *     summary: Login
  *     requestBody:
  *      required: true
@@ -24,10 +49,10 @@ const AuthValidator = require("../app/validator/auth.validator");
  *            properties:
  *              email:
  *               type: string
- *               example: admin@mail.com
+ *               example: irfi@example.com
  *              password:
  *               type: string
- *               example: password
+ *               example: secret
  *     responses:
  *      200:
  *        description: Success
@@ -47,7 +72,7 @@ router.post("/login", AuthValidator.login, AuthController.login);
  * /register:
  *  post:
  *     tags:
- *     - Admin Auth
+ *     - Auth
  *     summary: Register
  *     requestBody:
  *      required: true
@@ -59,16 +84,20 @@ router.post("/login", AuthValidator.login, AuthController.login);
  *              - name
  *              - email
  *              - password
+ *              - phone_number
  *            properties:
  *              name:
  *               type: string
- *               example: Jonatan
+ *               example: John Doe
  *              email:
  *               type: string
  *               example: admin@example.com
  *              password:
  *               type: string
  *               example: password
+ *              phone_number:
+ *               type: string
+ *               example: 08888888899
  *     responses:
  *      200:
  *        description: Success

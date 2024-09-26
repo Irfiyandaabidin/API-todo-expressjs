@@ -7,7 +7,7 @@ exports.swagger = (app) => {
       servers: [{ url: "/" }],
       openapi: "3.0.0",
       info: {
-        title: "TEMPLATE API",
+        title: "MAS TODO API",
         description:
           "support the needs and knowledge of API with a beautiful appearance",
         version: "1.0.0",

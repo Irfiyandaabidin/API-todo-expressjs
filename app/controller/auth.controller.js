@@ -67,6 +67,7 @@ const register = async (req, res) => {
     const user = await User.query().insert({
       name: req.body.name,
       email: req.body.email,
+      phone_number: req.body.phone_number,
       password: await bcrypt.hash(req.body.password, 10),
     });
 

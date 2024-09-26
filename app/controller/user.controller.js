@@ -4,6 +4,25 @@ const bcrypt = require("bcryptjs/dist/bcrypt");
 
 const index = async (req, res) => {
   try {
+    if(req.query.search) {
+      const lowerSearch = req.query.search.toLowerCase();
+      const users = await User.query()
+        .whereRaw(`LOWER(email) like ?`, [`%${lowerSearch}%`])
+        .orWhereRaw(`LOWER(name) like ?`, [`%${lowerSearch}%`]);
+
+      if(users.length == 0) {
+        return res.status(404).json({
+          status: 404,
+          message: "User not found!",
+          data: null,
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        message: "OK!",
+        data: users,
+      });
+    }
     const users = await User.query();
 
     res.status(200).json({
@@ -27,8 +46,8 @@ const store = async (req, res) => {
       password: await bcrypt.hash(req.body.password, 10),
     });
 
-    res.status(200).json({
-      status: 200,
+    res.status(201).json({
+      status: 201,
       message: "Success create!",
       data: user,
     });
@@ -59,13 +78,20 @@ const show = async (req, res) => {
 
 const update = async (req, res) => {
   try {
+    if(req.params.id != req.user.id) {
+      return res.status(403).json({
+        status : 403,
+        message: "Can't access to update this profile!",
+        data: null
+      })
+    }
     const user = await User.query()
       .findById(req.params.id)
       .patch({
         name: req.body.name,
         email: req.body.email,
+        image_profile: req.file && req.file.path
       });
-
       if(req.body.password){
         await User.query()
           .findById(req.params.id)
@@ -104,10 +130,27 @@ const destroy = async (req, res) => {
   }
 };
 
+const profile = async(req, res) => {
+  try {
+    const user = await User.query().findById(req.user.id);
+    return res.status(200).json({
+      status: 200,
+      message: "Success get profile!",
+      data: user,
+    })
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({
+      message: "Internal Server Error!",
+    })
+  }
+}
+
 module.exports = {
   index,
   store,
   show,
   update,
   destroy,
+  profile
 };
