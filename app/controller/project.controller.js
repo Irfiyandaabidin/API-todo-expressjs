@@ -61,24 +61,15 @@ const index = async(req, res) => {
       }
     }
     const projects = await query.page(page - 1, pageSize);
-    let uncomplete_todo = 0;
-    let totalDone = 0;
-    let totalOnProgress = 0;
     projects.results = projects.results.map((project) => {
       const totalTodos = project.todos.length;
       const totalIsCompleted = project.todos.filter(todo => todo.is_completed).length;
-      uncomplete_todo += (totalTodos - totalIsCompleted);
       const percentage = totalTodos ? (totalIsCompleted / totalTodos) * 100 : 0;
 
       const sortedTodos = project.todos.sort((a, b) => a.is_completed - b.is_completed);
 
       const processedTodos = sortedTodos.slice(0, 3);
 
-      if (percentage === 100) {
-        totalDone++;
-      } else {
-        totalOnProgress++;
-      }
       return {
         ...project,
         percentage: Math.trunc(percentage),
@@ -91,18 +82,10 @@ const index = async(req, res) => {
 
     const totalProjects = projects.total;
 
-    const status = {
-      uncomplete_todo,
-      totalProjects,
-      totalDone,
-      totalOnProgress
-    };
-
     res.status(200).json({
       status: 200,
       message: "Success get!",
       data: projects.results,
-      status,
       pagination: {
         currentPage: page,
         totalPages: Math.ceil(totalProjects / pageSize),
