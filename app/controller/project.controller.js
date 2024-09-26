@@ -11,7 +11,17 @@ const index = async(req, res) => {
         Project.relatedQuery('memberProjects')
           .where("memberProjects.id_user", req.user.id)
       )
-      .withGraphFetched("todos.user");
+      .withGraphFetched("todos")
+      .modifyGraph("todos", (builder) => {
+        builder.joinRelated("user").select([
+          "todos.id",
+          "description",
+          "name as created_by",
+          "todos.created_at",
+          "todos.updated_at",
+          "is_completed"
+        ]);
+      });
 
     if (req.query.search) {
       const { search } = req.query;
@@ -51,38 +61,48 @@ const index = async(req, res) => {
       }
     }
     const projects = await query.page(page - 1, pageSize);
+    let uncomplete_todo = 0;
+    let totalDone = 0;
+    let totalOnProgress = 0;
     projects.results = projects.results.map((project) => {
       const totalTodos = project.todos.length;
       const totalIsCompleted = project.todos.filter(todo => todo.is_completed).length;
+      uncomplete_todo += (totalTodos - totalIsCompleted);
       const percentage = totalTodos ? (totalIsCompleted / totalTodos) * 100 : 0;
 
       const sortedTodos = project.todos.sort((a, b) => a.is_completed - b.is_completed);
 
-      const processedTodos = sortedTodos.map(todo => ({
-        ...todo,
-        created_by: todo.user.name,
-      })).slice(0, 3);
+      const processedTodos = sortedTodos.slice(0, 3);
 
+      if (percentage === 100) {
+        totalDone++;
+      } else {
+        totalOnProgress++;
+      }
       return {
         ...project,
         percentage: Math.trunc(percentage),
-        todo_completed: totalIsCompleted,
-        todo_not_completed: totalTodos - totalIsCompleted,
-        todo_total: totalTodos,
+        completed: totalIsCompleted,
+        not_completed: totalTodos - totalIsCompleted,
+        total: totalTodos,
         todos: processedTodos,
       };
     });
 
     const totalProjects = projects.total;
 
-    if (req.query.progres === "done") {
-      projects.results = projects.results.filter(project => project.percentage === 100);
-    }
+    const status = {
+      uncomplete_todo,
+      totalProjects,
+      totalDone,
+      totalOnProgress
+    };
 
     res.status(200).json({
       status: 200,
       message: "Success get!",
       data: projects.results,
+      status,
       pagination: {
         currentPage: page,
         totalPages: Math.ceil(totalProjects / pageSize),
