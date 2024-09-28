@@ -32,7 +32,7 @@ exports.swagger = (app) => {
     apis: ["./routes/*.js"],
   };
 
-  app.use(`/docs`, swaggerUi.serve, swaggerUi.setup(swaggerJsdoc(options)));
+  app.use(`/docs`, swaggerUi.serve, swaggerUi.setup(swaggerJsdoc(options), { customCssUrl: CSS_URL }));
 
   const swaggerSpec = swaggerJsdoc(options);
   app.use(`/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec, { customCssUrl: CSS_URL }));
