@@ -2,7 +2,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
 exports.swagger = (app) => {
-  const CSS_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui.css";
+  const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
   const options = {
     definition: {
       servers: [{ url: "/" }],
