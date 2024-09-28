@@ -2,6 +2,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
 exports.swagger = (app) => {
+  const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
   const options = {
     definition: {
       servers: [{ url: "/" }],
@@ -34,7 +35,7 @@ exports.swagger = (app) => {
   app.use(`/docs`, swaggerUi.serve, swaggerUi.setup(swaggerJsdoc(options)));
 
   const swaggerSpec = swaggerJsdoc(options);
-  app.use(`/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use(`/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec, { customCssUrl: CSS_URL }));
 
   // Documentation in JSON format
   app.get(`/docs.json`, (req, res) => {
