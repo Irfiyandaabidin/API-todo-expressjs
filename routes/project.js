@@ -3,8 +3,6 @@ const router = require("express").Router();
 const projectController = require("../app/controller/project.controller");
 const AuthMiddleware = require("../middleware/auth.middleware");
 const projectValidator = require("../app/validator/project.validator");
-const csurf = require("csurf");
-const csrfProtection = csurf({ cookie: true });
 
 /**
  * @openapi
@@ -15,12 +13,6 @@ const csrfProtection = csurf({ cookie: true });
  *     summary: Create project
  *     security:
  *	     - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: x-csrf-token
- *         schema:
- *           type: string
- *         description: CSRF token required for form submission
  *     requestBody:
  *        required: true
  *        content:
@@ -41,7 +33,7 @@ const csrfProtection = csurf({ cookie: true });
  *      500:
  *        description: Server Error
  */
- router.post("/project", AuthMiddleware, csrfProtection, projectValidator.store, projectController.store);
+ router.post("/project", AuthMiddleware, projectValidator.store, projectController.store);
 
 /**
  * @openapi
@@ -104,7 +96,8 @@ router.get("/project", AuthMiddleware, projectController.index);
  *         name: id
  *         required: true
  *         schema:
- *            type: integer
+ *            type: string
+ *            format: uuid
  *         description: id project
  *     responses:
  *      200:
@@ -132,13 +125,9 @@ router.get("/project/:id", AuthMiddleware, projectController.show);
  *         name: id
  *         required: true
  *         schema:
- *            type: integer
+ *            type: string
+ *            format: uuid
  *         description: id project
- *       - in: header
- *         name: x-csrf-token
- *         schema:
- *           type: string
- *         description: CSRF token required for form submission
  *     responses:
  *      200:
  *        description: Success
@@ -165,13 +154,9 @@ router.delete("/project/:id", AuthMiddleware, projectController.destroy);
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *            type: string
+ *            format: uuid
  *         description: id project
- *       - in: header
- *         name: x-csrf-token
- *         schema:
- *           type: string
- *         description: CSRF token required for form submission
  *     requestBody:
  *        required: true
  *        content:

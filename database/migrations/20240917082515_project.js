@@ -4,7 +4,7 @@
  */
 exports.up = function(knex) {
   return knex.schema.createTable("projects", (table) => {
-    table.increments("id").primary().unsigned();
+    table.uuid("id").primary().defaultTo(knex.fn.uuid());
     table.string("name");
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());

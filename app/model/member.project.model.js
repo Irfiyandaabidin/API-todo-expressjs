@@ -1,3 +1,4 @@
+const { format } = require("mysql");
 const db = require("../../config/database");
 
 const { Model } = require("objection");
@@ -17,10 +18,12 @@ class MemberProject extends Model {
 
       properties: {
         id_user: {
-          type: "integer",
+          type: "string",
+          format: "uuid"
         },
         id_project: {
-          type: "integer",
+          type: "string",
+          format: "uuid"
         }
       }
     }

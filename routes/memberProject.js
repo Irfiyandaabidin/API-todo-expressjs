@@ -8,7 +8,7 @@ const auth = require("../middleware/auth.middleware");
  *  post:
  *     tags:
  *     - Member Project
- *     summary: Join project
+ *     summary: Invite user to project
  *     security:
  *	     - bearerAuth: []
  *     requestBody:
@@ -23,15 +23,16 @@ const auth = require("../middleware/auth.middleware");
  *            properties:
  *              id_project:
  *               type: string
- *               example: 1
+ *               format: uuid
+ *               example: 5d21f264-3985-4e4c-b44e-a7d38af0014f
  *              email:
  *               type: string
- *               example: 1
+ *               example: admin@example.test
  *     responses:
  *      201:
  *        description: Success
  *      403:
- *        description: User No Access
+ *        description: User Can Not Access
  *      404:
  *        description: Not Found
  *      409:
@@ -55,7 +56,8 @@ route.post("/member", auth, member.store);
  *         name: id_project
  *         required: true
  *         schema:
- *            type: integer
+ *            type: string
+ *            format: uuid
  *         description: id project
  *     responses:
  *      200:
@@ -83,7 +85,8 @@ route.get("/member/:id_project", auth, member.show);
  *         name: id_project
  *         required: true
  *         schema:
- *            type: integer
+ *            type: string
+ *            format: uuid
  *         description: id project
  *     responses:
  *      200:

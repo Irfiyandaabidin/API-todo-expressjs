@@ -1,3 +1,4 @@
+const { format } = require("mysql");
 const db = require("../../config/database");
 
 const { Model } = require("objection");
@@ -15,10 +16,12 @@ class Todo extends Model {
 
       properties: {
         id_project: {
-          type: "integer",
+          type: "string",
+          format: "uuid"
         },
         created_by: {
-          type: "integer",
+          type: "string",
+          format: "uuid"
         },
         description: {
           type: "string"

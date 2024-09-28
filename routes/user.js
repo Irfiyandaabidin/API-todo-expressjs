@@ -179,6 +179,6 @@ router.put("/user/:id", AuthMiddleware, upload.single("profile"), UserValidator.
  *      500:
  *        description: Server Error
  */
- router.delete("/user/:id", AuthMiddleware, UserController.destroy);
+router.delete("/user/:id", AuthMiddleware, UserController.destroy);
 
 module.exports = router;

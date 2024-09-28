@@ -141,9 +141,54 @@ const destroy = async (req, res) => {
   }
 };
 
+const complete = async (req, res) => {
+  try {
+    const checkMember = await Todo.query()
+      .findById(req.body.id)
+      .withGraphFetched('project.memberProjects')
+      .modifyGraph('project.memberProjects', (builder) => {
+        builder.where('id_user', req.user.id);
+      });
+
+    if (!checkMember) {
+      return res.status(403).json({
+        status: 403,
+        message: "Can't access to this project!",
+        data: null,
+      });
+    }
+
+    const todo = await Todo.query().findById(req.body.id);
+
+    if (!todo) {
+      return res.status(404).json({
+        status: 404,
+        message: "Todo not found!",
+        data: null,
+      });
+    }
+
+    const updatedTodo = await Todo.query().updateAndFetchById(req.body.id, {
+      is_completed: !todo.is_completed
+    });
+
+    res.status(200).json({
+      status: 200,
+      message: "Update is completed todo success!",
+      data: updatedTodo
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error!"
+    });
+  }
+};
+
 module.exports = {
   store,
   show,
   update,
   destroy,
+  complete
 };
