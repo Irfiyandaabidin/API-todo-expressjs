@@ -6,7 +6,7 @@ const todoValidator = require("../app/validator/todo.validator");
 
 /**
  * @openapi
- * /todos/completed:
+ * /todos/complete:
  *  put:
  *     tags:
  *     - Todos
@@ -22,7 +22,7 @@ const todoValidator = require("../app/validator/todo.validator");
  *              required:
  *                - id
  *              properties:
- *                description:
+ *                id:
  *                  type: string
  *                  format: uuid
  *                  example: 5d21f264-3985-4e4c-b44e-a7d38af0014f
