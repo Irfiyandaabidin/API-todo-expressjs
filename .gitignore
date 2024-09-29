@@ -2,7 +2,8 @@
 
 .env
 
+
 /upload/images/*
 
-# upload folder
-!/upload/images/
+
+!/upload/images/.gitignore
