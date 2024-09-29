@@ -4,9 +4,6 @@ const path = require("path");
 const upload = multer({
   limits: 800000,
   storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, __dirname)
-    },
     filename: (req, file, cb) => {
       let ext = path.extname(file.originalname);
       cb(null, `${Date.now()}${ext}`)

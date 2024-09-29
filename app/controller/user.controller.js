@@ -1,6 +1,8 @@
 const User = require("../model/user.model");
 
 const bcrypt = require("bcryptjs/dist/bcrypt");
+const ImageKit = require("imagekit");
+const fs = require("fs");
 
 const index = async (req, res) => {
   try {
@@ -85,12 +87,30 @@ const update = async (req, res) => {
         data: null
       })
     }
+    const imagekit = new ImageKit({
+      publicKey: process.env.PUBLIC_KEY_IMAGEKIT,
+      privateKey: process.env.PRIVATE_KEY_IMAGEKIT,
+      urlEndpoint: process.env.URL_ENDPOINT_IMAGEKIT
+    })
+
+    const imageRes = await new Promise((resolve, rejects) => {
+      imagekit.upload({
+        file: fs.readFileSync(req.file.path),
+        fileName: req.file.filename
+      }, (error, result) => {
+        if (error) {
+          return rejects(error);
+        }
+        resolve(result);
+      });
+    })
+
     const user = await User.query()
       .findById(req.params.id)
       .patch({
         name: req.body.name,
         email: req.body.email,
-        image_profile: req.file && req.file.path
+        image_profile: req.file && imageRes.url
       });
       if(req.body.password){
         await User.query()
