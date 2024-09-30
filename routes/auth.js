@@ -60,6 +60,7 @@ router.post("/login", AuthValidator.login, AuthController.login);
  *              - name
  *              - email
  *              - password
+ *              - confirm_password
  *              - phone_number
  *            properties:
  *              name:
@@ -69,6 +70,9 @@ router.post("/login", AuthValidator.login, AuthController.login);
  *               type: string
  *               example: admin@example.com
  *              password:
+ *               type: string
+ *               example: password
+ *              confirm_password:
  *               type: string
  *               example: password
  *              phone_number:
