@@ -33,9 +33,11 @@ const register = [
 
   check("phone_number").not().isEmpty().withMessage("phone_number can not be empty!"),
 
-  check("phone_number").isLength({ min: 10, max: 14 }).withMessage("phone_number number min 10 and max 14 character"),
+  check("phone_number").isLength({ min: 10, max: 14 }).withMessage("phone_number min 10 and max 14 character"),
 
   check("password").not().isEmpty().withMessage("password can not be empty!"),
+
+  check("password").isLength({ min: 6 }).withMessage("password min 6 character"),
 
   check("confirm_password").not().isEmpty().withMessage("confirm_password can not be empty!")
     .custom((value, { req }) => {
